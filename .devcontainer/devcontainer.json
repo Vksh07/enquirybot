@@ -1,8 +1,0 @@
-{
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "postCreateCommand": "pip install --quiet flask && setsid nohup python app.py > app.log 2>&1 < /dev/null & sleep 3; echo 'EnquiryBot auto-started on port 5000'",
-  "forwardPorts": [5000],
-  "portsAttributes": {
-    "5000": { "visibility": "public", "label": "EnquiryBot Demo" }
-  }
-}
