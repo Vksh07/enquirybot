@@ -118,58 +118,116 @@ def leads():
     return jsonify(rows)
 
 # ---------- dashboard ----------
-DASH = """<!doctype html><html><head><meta charset=utf-8><title>EnquiryBot</title>
+DASH = """<!doctype html><html><head><meta charset=utf-8><title>EnquiryBot — Dashboard</title>
 <style>
-:root{--bg:#0b0d10;--card:#15181d;--fg:#e8eaed;--mut:#8a919c;--acc:#22c55e;--bor:#252a31}
+:root{--bg:#0a0c0f;--side:#0e1116;--card:#14181f;--fg:#eef1f5;--mut:#8b95a3;--acc:#22c55e;--bor:#20262f;--acc-dim:#12351f}
 *{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--fg);font:15px/1.5 system-ui;padding:24px;max-width:980px;margin:auto}
-h1{font-size:22px;margin-bottom:4px}
-.sub{color:var(--mut);margin-bottom:20px;font-size:13px}
-.card{background:var(--card);border:1px solid var(--bor);border-radius:12px;padding:16px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:720px){.grid{grid-template-columns:1fr}}
-input,textarea{width:100%;background:#0e1116;border:1px solid var(--bor);color:var(--fg);
-border-radius:8px;padding:8px 10px;font:14px system-ui;margin:4px 0 10px}
-label{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-button{background:var(--acc);color:#04120a;border:0;border-radius:8px;padding:9px 16px;
-font-weight:600;cursor:pointer}
-.lead{border-bottom:1px solid var(--bor);padding:10px 0}
-.lead:last-child{border:0}
-.ph{color:var(--acc);font-weight:600}
-.mut{color:var(--mut);font-size:12px}
-.reply{background:#0e1116;border-left:2px solid var(--acc);padding:6px 10px;margin-top:6px;
-border-radius:0 6px 6px 0;font-size:13px}
-.badge{display:inline-block;background:#17351f;color:var(--acc);border-radius:99px;
-padding:2px 10px;font-size:11px;font-weight:600}
+body{background:var(--bg);color:var(--fg);font:14px/1.55 -apple-system,'Segoe UI',system-ui,sans-serif;
+display:flex;min-height:100vh}
+aside{width:230px;background:var(--side);border-right:1px solid var(--bor);padding:22px 16px;
+position:sticky;top:0;height:100vh;flex-shrink:0}
+.logo{font-size:19px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
+.logo span{color:var(--acc)}
+.logosub{color:var(--mut);font-size:11px;margin-bottom:26px}
+nav a{display:block;padding:9px 12px;border-radius:8px;color:var(--mut);text-decoration:none;
+font-weight:500;margin-bottom:2px}
+nav a.on,nav a:hover{background:var(--card);color:var(--fg)}
+nav a.on{border-left:2px solid var(--acc);border-radius:0 8px 8px 0;padding-left:10px}
+.planbox{margin-top:26px;background:var(--acc-dim);border:1px solid #1d4a2c;border-radius:10px;padding:12px}
+.planbox b{font-size:13px}.planbox p{color:var(--mut);font-size:11px;margin-top:3px}
+main{flex:1;padding:26px 32px;max-width:1100px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+header h1{font-size:21px;font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#0f2b18;color:var(--acc);
+border:1px solid #1d4a2c;border-radius:99px;padding:4px 12px;font-size:12px;font-weight:600}
+.dot{width:7px;height:7px;background:var(--acc);border-radius:99px;box-shadow:0 0 6px var(--acc)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}aside{display:none}}
+.stat{background:var(--card);border:1px solid var(--bor);border-radius:12px;padding:16px}
+.stat .k{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+.stat .v{font-size:26px;font-weight:800;margin-top:6px}
+.stat .v small{font-size:13px;color:var(--mut);font-weight:500}
+.cols{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bor);border-radius:12px;padding:18px}
+.card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.card .hint{color:var(--mut);font-size:12px;margin-bottom:14px}
+label{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin:10px 0 4px}
+input,textarea{width:100%;background:#0c0f14;border:1px solid var(--bor);color:var(--fg);
+border-radius:8px;padding:9px 11px;font:13px system-ui;outline:none}
+input:focus,textarea:focus{border-color:var(--acc)}
+button{background:var(--acc);color:#04120a;border:0;border-radius:8px;padding:9px 18px;
+font-weight:700;cursor:pointer;font-size:13px;margin-top:10px}
+button:hover{filter:brightness(1.1)}
+.rule{display:flex;gap:8px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--bor);
+font-size:13px}
+.rule:last-child{border:0}
+.rule b{color:var(--acc);min-width:70px}
+.rule span{color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px;
+padding:8px 10px;border-bottom:1px solid var(--bor)}
+td{padding:10px;border-bottom:1px solid var(--bor);vertical-align:top}
+tr:last-child td{border:0}
+td .who{color:var(--acc);font-weight:600;white-space:nowrap}
+td .msg{color:var(--fg)}
+td .rep{color:var(--mut);font-size:12px}
+td .tm{color:var(--mut);font-size:11px;white-space:nowrap}
+.empty{color:var(--mut);text-align:center;padding:26px;font-size:13px}
+.webhook{background:#0c0f14;border:1px dashed var(--bor);border-radius:8px;padding:10px;
+font:12px ui-monospace,monospace;color:var(--mut);word-break:break-all;margin-top:8px}
 </style></head><body>
-<h1>EnquiryBot <span class="badge">LIVE</span></h1>
-<div class="sub">WhatsApp Autopilot for Indian SMBs — every message answered in seconds, 24/7</div>
-<div class="grid">
-<div class="card"><h3 style="margin-bottom:10px">Business setup</h3>
+<aside>
+<div class="logo">Enquiry<span>Bot</span></div>
+<div class="logosub">WhatsApp Autopilot for Business</div>
+<nav>
+<a href="#" class="on">Overview</a><a href="#leads">Lead Inbox</a>
+<a href="#rules">Reply Rules</a><a href="#settings">Settings</a>
+</nav>
+<div class="planbox"><b>Pro plan — ₹499/mo</b><p>Unlimited auto-replies · Renews monthly</p></div>
+</aside>
+<main>
+<header><h1>Demo Coaching Centre</h1><span class="badge"><span class="dot"></span>LIVE</span></header>
+<div class="stats">
+<div class="stat"><div class="k">Messages answered</div><div class="v" id=s1>0</div></div>
+<div class="stat"><div class="k">Auto-replied</div><div class="v" id=s2>0<small> /0</small></div></div>
+<div class="stat"><div class="k">Leads captured</div><div class="v" id=s3>0</div></div>
+<div class="stat"><div class="k">Avg response</div><div class="v">0.8<small>s</small></div></div>
+</div>
+<div class="cols" id="rules">
+<div class="card"><h3>Reply Rules</h3><div class="hint">Keyword → instant reply. Matched 24/7, even at 2 AM.</div>
+<label>Keyword</label><input id=kw placeholder="e.g. fees">
+<label>Reply</label><textarea id=rp rows=2 placeholder="e.g. Our fees are ₹45,000/year. Reply 3 to book a call."></textarea>
+<button onclick="addRule()">+ Add rule</button>
+<div id=rules style="margin-top:14px"></div></div>
+<div class="card" id="settings"><h3>Business settings</h3>
+<div class="hint">Connect your WhatsApp Business number via Meta Cloud API.</div>
 <label>Business name</label><input id=name value="Demo Coaching Centre">
 <label>Meta Phone Number ID</label><input id=pid placeholder="from Meta Cloud API dashboard">
 <label>Meta Access Token</label><input id=tok type=password placeholder="permanent token">
-<button onclick="saveCfg()">Save config</button></div>
-<div class="card"><h3 style="margin-bottom:10px">Reply rules (keyword → reply)</h3>
-<label>Keyword</label><input id=kw placeholder="fees"><label>Reply</label>
-<textarea id=rp rows=2 placeholder="Our fees are ₹X. Reply 3 to book a call."></textarea>
-<button onclick="addRule()">Add rule</button>
-<div id=rules class="mut" style="margin-top:8px"></div></div></div>
-<div class="card"><h3 style="margin-bottom:10px">Lead inbox <span class="mut" id=cnt></span></h3>
-<div id=leads></div></div>
+<button onclick="saveCfg()">Save settings</button>
+<div class="hint" style="margin-top:14px">Webhook URL (paste into Meta dashboard):</div>
+<div class="webhook">https://&lt;your-domain&gt;/webhook</div></div></div>
+<div class="card" id="leads"><h3>Lead Inbox <span class="hint" id=cnt></span></h3>
+<div class="hint">Every enquiry, captured with the customer's number.</div>
+<table><thead><tr><th>Customer</th><th>Message</th><th>Auto-reply sent</th><th>Time</th></tr></thead>
+<tbody id=leads></tbody></table></div>
+</main>
 <script>
 let RULES=[];
 async function saveCfg(){await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({name:name.value,phone_id:pid.value,token:tok.value})});alert('saved')}
+body:JSON.stringify({name:name.value,phone_id:pid.value,token:tok.value})});alert('Settings saved')}
 async function addRule(){RULES.push({keyword:kw.value,reply:rp.value});
 await fetch('/api/rules',{method:'POST',headers:{'Content-Type':'application/json'},
 body:JSON.stringify({rules:RULES})});drawRules()}
-function drawRules(){rules.innerHTML=RULES.map(r=>'• <b>'+r.keyword+'</b> → '+r.reply).join('<br>')}
+function drawRules(){rules.innerHTML=RULES.map(r=>'<div class="rule"><b>'+r.keyword+'</b><span>'+r.reply+'</span></div>').join('')}
 async function refresh(){const l=await (await fetch('/api/leads')).json();
-cnt.textContent='('+l.length+')';
-leads.innerHTML=l.map(x=>'<div class="lead"><div class="ph">+'+x.phone+'</div>'+
-'<div>'+x.message+'</div><div class="reply">→ '+x.reply+'</div>'+
-'<div class="mut">'+new Date(x.ts*1000).toLocaleString()+'</div></div>').join('')}
+s1.textContent=l.length; s2.innerHTML=l.length+'<small> /'+l.length+'</small>'; s3.textContent=l.length;
+cnt.textContent='— '+l.length+' total';
+leads.innerHTML=l.length?l.map(x=>'<tr><td><div class="who">+'+x.phone+'</div></td>'+
+'<td><div class="msg">'+x.message+'</div></td><td><div class="rep">'+x.reply+'</div></td>'+
+'<td><div class="tm">'+new Date(x.ts*1000).toLocaleString('en-IN',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})+'</div></td></tr>').join('')
+:'<tr><td colspan=4 class="empty">No enquiries yet — they start appearing the moment your first message arrives.</td></tr>'}
 refresh();setInterval(refresh,5000);
 </script></body></html>"""
 
